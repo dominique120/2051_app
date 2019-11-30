@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SITY: Como te vas a mover?</string>
+    <string name="ok">OK</string>
+    <string name="mapsAppText">Por Transporte Publico</string>
+    <string name="mapsAppTextDescription">Utilizaras los sistemas de transporte publico.</string>
+    <string name="streetViewText">Show Street View</string>
+    
+    <string name="location_permission_rationale">This activity requires permission to use the GPS to determine your location.</string>
+    <string name="location_permission_missing">This activity is missing permission to use the GPS. Closing. </string>
+    
+    <string name="activity_label_axml">Por Transporte Publico"</string>
+    <string name="activity_description_axml">Utilizaras los sistemas de transporte publico.</string>
+    
+    <string name="activity_label_mapwithmarkers">Por Transporte Particular</string>
+    <string name="activity_description_mapwithmarkers">Utilizaras tu moto/carro propio.</string>
+    
+    <string name="activity_label_mapwithoverlays">Por Transporte Publico</string>
+    <string name="activity_description_mapwithoverlays">Utilizaras los sistemas de transporte publico.</string>
+    
+    <string name="activity_label_mylocation">My Location</string>
+    <string name="activity_description_mylocation">Shows how to perform a permission check along with Maps.</string>
+    
+</resources>
