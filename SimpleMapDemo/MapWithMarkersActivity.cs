@@ -5,18 +5,20 @@ using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Widget;
-
 using Android.Content;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Graphics;
+using Android.Runtime;
+using Android.Content.PM;
+using Android.Util;
+using Android.Support.Design.Widget;
 
 namespace SimpleMapDemo
 {
     public class HideAndShowKeyboard
     {
-         //Shows the soft keyboard
+        //Shows the soft keyboard
         public void showSoftKeyboard(Android.App.Activity activity, View view)
         {
             InputMethodManager inputMethodManager = (InputMethodManager)activity.GetSystemService(Context.InputMethodService);
@@ -25,7 +27,7 @@ namespace SimpleMapDemo
             inputMethodManager.ToggleSoftInput(ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly);//personal line added
         }
 
-         // Hides the soft keyboard
+        // Hides the soft keyboard
         public void hideSoftKeyboard(Android.App.Activity activity)
         {
             var currentFocus = activity.CurrentFocus;
@@ -40,19 +42,26 @@ namespace SimpleMapDemo
     [Activity(Label = "@string/activity_label_mapwithmarkers")]
     public class MapWithMarkersActivity : AppCompatActivity, IOnMapReadyCallback
     {
+
+        static readonly int REQUEST_PERMISSIONS_LOCATION = 1000;
+        static readonly string TAG = "MyLocationActivity";
+
+
         static readonly LatLng start_point = new LatLng(-12.072237, -76.914285);
 
         static readonly LatLng end_point_1_RF = new LatLng(-12.082285, -76.935592);
         static readonly LatLng end_point_2_JP = new LatLng(-12.071533, -76.956535);
         static readonly LatLng end_point_3_GL = new LatLng(-12.075992, -76.958327);
 
+        public LatLng currentPos;
+
         Android.Widget.Button animateToLocationButton;
         GoogleMap googleMap;
-
 
         public void OnMapReady(GoogleMap map)
         {
             googleMap = map;
+
 
             googleMap.UiSettings.ZoomControlsEnabled = true;
             googleMap.UiSettings.CompassEnabled = true;
@@ -66,7 +75,7 @@ namespace SimpleMapDemo
                                 .Add(new LatLng(-12.082287, -76.935816))
                                 .Add(new LatLng(-12.084463, -76.938913))
                                 ;
-            
+
 
             PolylineOptions GL_polyline = new PolylineOptions()
                                 .Add(new LatLng(-12.075163, -76.957738))
@@ -74,7 +83,7 @@ namespace SimpleMapDemo
                                 .Add(new LatLng(-12.075745, -76.959329))
                                 .Add(new LatLng(-12.075750, -76.960557))
                                 ;
-            
+
 
             PolylineOptions JP_polyline = new PolylineOptions()
                                 .Add(new LatLng(-12.070950, -76.955305))
@@ -91,11 +100,11 @@ namespace SimpleMapDemo
             JP_polyline.InvokeWidth(35.0f);
             GL_polyline.InvokeWidth(35.0f);
 
-
-
             map.AddPolyline(JP_polyline);
             map.AddPolyline(RF_polyline);
             map.AddPolyline(GL_polyline);
+
+
         }
 
 
@@ -104,15 +113,13 @@ namespace SimpleMapDemo
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.MapLayout);
 
-            var mapFragment = (MapFragment) FragmentManager.FindFragmentById(Resource.Id.map);
+            var mapFragment = (MapFragment)FragmentManager.FindFragmentById(Resource.Id.map);
             mapFragment.GetMapAsync(this);
 
             animateToLocationButton = FindViewById<Android.Widget.Button>(Resource.Id.animateButton);
             animateToLocationButton.Click += AnimateToPasschendaele;
-
         }
 
-        
 
 
         Random pos_rnd = new Random();
@@ -121,13 +128,13 @@ namespace SimpleMapDemo
 
         void AnimateToPasschendaele(object sender, EventArgs e)
         {
-            
+
             var builder = CameraPosition.InvokeBuilder();
             HideAndShowKeyboard hideAndShowKeyboard = new HideAndShowKeyboard();
 
             do
             {
-                pos_i = pos_rnd.Next(1,4);
+                pos_i = pos_rnd.Next(1, 4);
             } while (pos_i == prevnum);
 
             prevnum = pos_i;
@@ -153,7 +160,7 @@ namespace SimpleMapDemo
 
                 Marker marker = googleMap.AddMarker(loc_marker);
                 marker.ShowInfoWindow();
-            } 
+            }
             else if (pos_i == 2)
             {
                 hideAndShowKeyboard.hideSoftKeyboard(this);
@@ -213,5 +220,31 @@ namespace SimpleMapDemo
             var cameraUpdate = CameraUpdateFactory.NewLatLngZoom(start_point, 15);
             googleMap.MoveCamera(cameraUpdate);
         }
+
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+        {
+            if (requestCode == REQUEST_PERMISSIONS_LOCATION)
+            {
+                if (grantResults.AllPermissionsGranted())
+                {
+                    return;
+                }
+                else
+                {
+                    // Permissions not granted!
+                    Log.Info(TAG, "The app does not have location permissions");
+
+                    var layout = FindViewById(Android.Resource.Id.Content);
+                    Snackbar.Make(layout, Resource.String.location_permission_missing, Snackbar.LengthLong).Show();
+                    Finish();
+                }
+            }
+            else
+            {
+                base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
+        }
+
     }
 }
